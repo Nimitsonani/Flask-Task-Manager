@@ -1,31 +1,80 @@
 # TaskFlow - Flask Task Manager
 
-A Task web application built with Flask, featuring user authentication, task management, SQLAlchemy ORM, and a responsive Bootstrap UI.
+TaskFlow is a simple task management web application built with Flask.
+
+It supports user authentication and persistent task storage using SQLAlchemy.  
+The application is structured so that each user manages their own task list.
 
 ---
 
-## Project Overview
+## What This Project Does
 
-TaskFlow is a simple Task Manager web application built with Flask.  
-It includes user authentication and allows each user to manage their own tasks.
+The application has two modes:
 
-If a user is not logged in, tasks are stored temporarily in memory.  
-Refreshing the page will clear those tasks.
+**1. Guest Mode (Not Logged In)**  
+- Tasks are stored temporarily in memory.
+- Refreshing the page clears the task list.
+- No data is persisted.
 
-If a user is logged in, tasks are stored in a relational SQLite database and are linked to that specific user. This allows tasks to persist even after refreshing the page or logging out and back in.
+**2. Authenticated Mode (Logged In)**  
+- Tasks are stored in a relational SQLite database.
+- Each task is linked to a specific user.
+- Tasks remain saved even after logout and login.
+
+This design demonstrates the difference between temporary in-memory storage and persistent database storage.
 
 ---
 
-## Features
+## How It Works
 
-- User registration and login
-- Password hashing using Werkzeug
-- Session management with Flask-Login
-- Create and delete tasks
+### Authentication
+
+- Users register with a username and password.
+- Passwords are hashed using Werkzeug.
+- Flask-Login manages sessions.
+- Protected routes ensure users can only access their own tasks.
+
+---
+
+### Task Management
+
+Each task:
+
+- Has a title
+- Has a completion status (completed / not completed)
+- Is linked to a specific user (via foreign key relationship)
+
+Users can:
+
+- Create tasks
 - Mark tasks as completed
-- Each user sees only their own tasks
-- Flash messages for feedback
-- SQLite database using SQLAlchemy
+- Delete tasks
+
+Each user only sees their own tasks.  
+All queries are filtered by the currently authenticated user.
+
+---
+
+## Database Structure
+
+The application uses SQLite with SQLAlchemy ORM.
+
+There are two main models:
+
+- **User**
+- **Task**
+
+Relationship:
+
+- One user → many tasks
+
+This ensures proper ownership and isolation of data between users.
+
+---
+
+## Screenshot
+
+<img width="1920" height="890" alt="image" src="https://github.com/user-attachments/assets/e6281811-8186-45e8-983b-6798c7235f96" />
 
 ---
 
@@ -48,45 +97,33 @@ If a user is logged in, tasks are stored in a relational SQLite database and are
 main.py            # Application routes and logic
 forms.py           # Form definitions
 templates/         # HTML templates
-static/            # CSS and JavaScript files
+static/            # CSS and JS files
 ```
 
 ---
 
-## Environment Variables
+## Running Locally
 
-This project uses environment variables for configuration.
+1. Install dependencies:
 
-Create a `.env` file in the root directory:
+```
+pip install -r requirements.txt
+```
+
+2. Create a `.env` file in the root directory:
 
 ```
 SECRET_KEY=your_secret_key_here
 DB_URI=sqlite:///todolist.db
 ```
 
-- SECRET_KEY: used for session security
-- DB_URI: database connection string
+- `SECRET_KEY` is required for session security.
+- `DB_URI` defines the database connection.
 
----
-
-## Setup
-
-1. Install dependencies
-
-```
-pip install -r requirements.txt
-```
-
-2. Create a `.env` file and add the required variables
-
-3. Run the application
+3. Run the application:
 
 ```
 python main.py
 ```
 
----
-
-## Screenshot
-
-<img width="1920" height="890" alt="image" src="https://github.com/user-attachments/assets/e6281811-8186-45e8-983b-6798c7235f96" />
+The database will be created automatically if it does not already exist.
